@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  amout: 1.5
+  card: one
+  transaction_type: MyString
+  description: MyString
+
+two:
+  amout: 1.5
+  card: two
+  transaction_type: MyString
+  description: MyString
