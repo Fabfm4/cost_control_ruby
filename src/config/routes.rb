@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   scope :api, default: { format: :json } do
     scope :v1 do
       resources :banks
-      resources :transactions
+      # TODO: resources :transactions
       resources :cards do
         resources :transactions
       end

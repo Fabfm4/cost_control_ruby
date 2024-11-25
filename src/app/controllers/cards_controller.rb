@@ -3,5 +3,6 @@ class CardsController < ApplicationController
 
   def initialize
     @model = Card
+    @model_name = "card"
   end
 end

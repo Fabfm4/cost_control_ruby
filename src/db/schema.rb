@@ -11,6 +11,9 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.0].define(version: 2024_11_21_231217) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
   create_table "banks", force: :cascade do |t|
     t.string "name"
     t.boolean "active", default: true, null: false
@@ -24,15 +27,16 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_21_231217) do
     t.integer "deadline_payment"
     t.integer "cutoff_day_payment"
     t.string "card_type", default: "credit"
+    t.bigint "bank_id", null: false
+    t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "bank_id", null: false
     t.index ["bank_id"], name: "index_cards_on_bank_id"
   end
 
   create_table "transactions", force: :cascade do |t|
     t.float "amout"
-    t.integer "card_id", null: false
+    t.bigint "card_id", null: false
     t.string "transaction_type", default: "SPENDING"
     t.string "description"
     t.datetime "created_at", null: false
