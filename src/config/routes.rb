@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   root "rails/health#show"
   scope :api, default: { format: :json } do
     scope :v1 do
+      post "auth/login", to: "auth#login"
+      resources :users
       resources :banks
       # TODO: resources :transactions
       resources :cards do

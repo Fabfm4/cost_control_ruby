@@ -6,6 +6,10 @@ module Crud
   end
 
   def index
+    if @has_user
+      render json: model.where(user: @current_user)
+      return
+    end
     render json: model.all
   end
 
@@ -16,14 +20,17 @@ module Crud
   end
 
   def create
+    if @has_user
+      params[@model_name][:user_id] = @current_user.id
+    end
     model = @model.new(model_params)
     if model.save
       render json: model, status: :created
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_entity, json: model.errors
     end
-  rescue ActionController::ParameterMissing => error
-    render json: { error: error.message }, status: :bad_request
+  rescue ActionController::ParameterMissing
+    render status: :bad_request, json: model.errors
   end
 
   def update
@@ -35,9 +42,8 @@ module Crud
     end
   rescue ActiveRecord::RecordNotFound
     render status: :not_found
-  rescue ActionController::ParameterMissing => error
-    puts error
-    render json: { error: error.message }, status: :bad_request
+  rescue ActionController::ParameterMissing
+    render status: :bad_request, json: model.errors
   end
 
   private
