@@ -3,5 +3,6 @@ class BanksController < ApplicationController
 
   def initialize
     @model = Bank
+    @model_name = "bank"
   end
 end

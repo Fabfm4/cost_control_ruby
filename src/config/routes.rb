@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   scope :api, default: { format: :json } do
     scope :v1 do
       post "auth/login", to: "auth#login"
+      post "admin/user", to: "auth#admin"
       resources :users
       resources :banks
       # TODO: resources :transactions
