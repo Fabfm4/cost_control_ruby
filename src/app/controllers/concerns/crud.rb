@@ -6,23 +6,20 @@ module Crud
   end
 
   def index
-    if @has_user
-      render json: model.where(user: @current_user)
-      return
-    end
-    render json: model.all
+    render json: model.where(user: @current_user)
   end
 
   def show
-    render json: model.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render status: :not_found
+    object_json = model.where(user: @current_user, id: params[:id])
+    if object_json.empty?
+      render status: :not_found
+    else
+      render json: object_json.first
+    end
   end
 
   def create
-    if @has_user
-      params[@model_name][:user_id] = @current_user.id
-    end
+    params[@model_name][:user_id] = @current_user.id
     model = @model.new(model_params)
     if model.save
       render json: model, status: :created
@@ -34,14 +31,18 @@ module Crud
   end
 
   def update
-    model = @model.find(params[:id])
+    model_object = model.where(user: @current_user, id: params[:id])
+    if model_object.empty?
+      render status: :not_found
+      return
+    end
+
+    model = model_object.first
     if model.update model_params
       render json: model
     else
       render :edit, status: :unprocessable_entity
     end
-  rescue ActiveRecord::RecordNotFound
-    render status: :not_found
   rescue ActionController::ParameterMissing
     render status: :bad_request, json: model.errors
   end
@@ -52,7 +53,6 @@ module Crud
 
     end
     fields = @model.attribute_names.map { |attr| attr.to_sym }
-    puts Hash[@model_name, fields], fields
     params.expect(Hash[@model_name, fields])
   end
 end

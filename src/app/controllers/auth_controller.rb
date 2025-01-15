@@ -10,18 +10,44 @@ class AuthController < ApplicationController
     render status: :unprocessable_entity, json: user.errors
   end
 
-  def login
-    login_params = auth_login_params
-    if login_params[:email].nil?
+  def signin
+    signin_params = auth_signin_params
+    if signin_params[:email].nil?
       render status: :bad_request, json: { email: "Is required" }
       return
     end
-    user = User.find_by(email: login_params[:email])
+    user = User.find_by(email: signin_params[:email])
     if user.nil?
       render json: { error: "unauthorized" }, status: :unauthorized
       return
     end
     render status: :ok, json: { token: jwt_encode({ user_id: user.id }) }
+  end
+
+  def signup
+    signup_params = auth_signup_params
+    if signup_params[:email].nil? 
+      render status: :bad_request, json: { email: "Is required" }
+      return
+    end
+    if signup_params[:user_name].nil? 
+      render status: :bad_request, json: { user_name: "Is required" }
+      return
+    end
+
+    user = User.find_by(email: signup_params[:email])
+    if user.nil?
+      user = User.new(signup_params)
+      if user.save
+        render status: :created, json: { token: jwt_encode({ user_id: user.id }) }
+        return
+      end
+      render status: :unprocessable_entity, json: user.errors
+      return
+    end
+    render json: { error: "User already exists" }, status: :bad_request
+
+
   end
 
   private
@@ -30,9 +56,14 @@ class AuthController < ApplicationController
   end
 
   private
-  def auth_login_params
+  def auth_signin_params
     params.require(:login) do |p|
       p.require(:email)
     end
+  end
+
+  private
+  def auth_signup_params
+    params.expect(signup: [:user_name, :email])
   end
 end

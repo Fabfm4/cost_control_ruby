@@ -10,6 +10,7 @@ class ApplicationController < ActionController::API
     begin
       @decoded = jwt_decode(header)
       @current_user = User.find(@decoded[0]["user_id"])
+      @require_auth = true
     rescue ActiveRecord::RecordNotFound => e
       render json: { error: e.message }, status: :unauthorized
     rescue JWT::DecodeError => e
@@ -20,4 +21,9 @@ class ApplicationController < ActionController::API
   def jwt_decode(token)
     JWT.decode token, Rails.application.config.jwt_secret, true, { algorithm: "HS256" }
   end
+
+  # def add_user_id_to_params
+  #   puts @model_name
+  #   params[@model_name][:user_id] = @current_user.id
+  # end
 end

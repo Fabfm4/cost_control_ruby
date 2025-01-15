@@ -1,4 +1,4 @@
-class TransactionsController < ApplicationController
+class ExpensesController < ApplicationController
   include Crud
 
   def initialize

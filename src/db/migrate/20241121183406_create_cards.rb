@@ -8,6 +8,7 @@ class CreateCards < ActiveRecord::Migration[8.0]
       t.string :card_type, default: 'credit'
       t.references :bank, null: false, foreign_key: true
       t.boolean :active, null: false, default: true
+      t.references :users, null: false, foreign_key: true
 
       t.timestamps
     end
